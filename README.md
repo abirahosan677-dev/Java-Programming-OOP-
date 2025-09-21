@@ -2,6 +2,7 @@ Overview
 
 The PPE (Personal Protective Equipment) Inventory System is a Java-based application designed to manage the inventory of PPE items for healthcare organizations. It allows users to track PPE items, manage suppliers, and monitor transactions. This system helps streamline the supply chain and ensures hospitals have the necessary PPE during critical times.
 
+
 Features
 
 Inventory Management: Track PPE items available in the system.
@@ -13,6 +14,7 @@ Transactions: Record transactions involving PPE items, including usage and reple
 User Management: Manage users within the system.
 
 Reports: Generate reports on PPE inventory and transactions.
+
 
 Directory Structure
 
