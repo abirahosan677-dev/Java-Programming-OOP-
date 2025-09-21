@@ -1,0 +1,4 @@
+admin,Admin Name,admin123,admin
+staff1,Gideon,12345,staff
+user2,User Name,userpass,staff
+user3,James,28021,staff

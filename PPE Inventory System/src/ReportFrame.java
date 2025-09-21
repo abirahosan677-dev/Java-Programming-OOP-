@@ -1,0 +1,186 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
+ */
+
+/**
+ *
+ * @author Chen En
+ */
+import javax.swing.*;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.DefaultTableModel;
+import java.awt.*;
+import java.io.*;
+import java.util.Vector;
+
+public class ReportFrame extends javax.swing.JFrame {
+    private JTable reportTable;
+    private DefaultTableModel tableModel;
+    private JTextField searchField;
+    private JButton searchButton;
+
+    public ReportFrame() {
+        setTitle("Transaction Report");
+        setSize(800, 600);
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        setLocationRelativeTo(null);
+
+        tableModel = new DefaultTableModel();
+        tableModel.setColumnIdentifiers(new String[]{"Transaction ID", "PPE Type", "Quantity", "Supplier/Hospital"});
+
+        reportTable = new JTable(tableModel);
+        JScrollPane scrollPane = new JScrollPane(reportTable);
+
+        searchField = new JTextField(20);
+        searchButton = new JButton("Search");
+        searchButton.addActionListener(e -> searchTransactions());
+
+        JPanel searchPanel = new JPanel();
+        searchPanel.add(new JLabel("Search PPE or Supplier/Hospital: "));
+        searchPanel.add(searchField);
+        searchPanel.add(searchButton);
+
+        add(searchPanel, BorderLayout.NORTH);
+        add(scrollPane, BorderLayout.CENTER);
+
+        loadTransactions();
+    }
+
+    private void loadTransactions() {
+        tableModel.setRowCount(0);
+        try (BufferedReader reader = new BufferedReader(new FileReader("transactions.txt"))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                System.out.println("Reading line: " + line); // Debugging output
+                String[] data = line.split(",");
+                if (data.length == 4) {
+                    Vector<String> row = new Vector<>();
+                    row.add(data[0]);  // Transaction ID
+                    row.add(data[1]);  // PPE Type
+                    row.add(data[2]);  // Quantity
+                    row.add(data[3]);  // Supplier/Hospital
+                    tableModel.addRow(row);
+                }
+            }
+        } catch (IOException e) {
+            JOptionPane.showMessageDialog(this, "Error loading transactions", "Error", JOptionPane.ERROR_MESSAGE);
+        }
+        tableModel.fireTableDataChanged(); // Refresh table
+        reportTable.repaint();
+        highlightLowStock();
+    }
+
+    private void searchTransactions() {
+        String query = searchField.getText().trim().toLowerCase();
+        if (query.isEmpty()) {
+            loadTransactions();
+            return;
+        }
+        tableModel.setRowCount(0);
+        try (BufferedReader reader = new BufferedReader(new FileReader("transactions.txt"))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                String[] data = line.split(",");
+                if (data.length == 4 && (data[1].toLowerCase().contains(query) || data[3].toLowerCase().contains(query))) {
+                    Vector<String> row = new Vector<>();
+                    row.add(data[0]);
+                    row.add(data[1]);
+                    row.add(data[2]);
+                    row.add(data[3]);
+                    tableModel.addRow(row);
+                }
+            }
+        } catch (IOException e) {
+            JOptionPane.showMessageDialog(this, "Error searching transactions", "Error", JOptionPane.ERROR_MESSAGE);
+        }
+        tableModel.fireTableDataChanged();
+        highlightLowStock();
+    }
+
+    private void highlightLowStock() {
+        reportTable.setDefaultRenderer(Object.class, new DefaultTableCellRenderer() {
+            @Override
+            public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+                Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+                try {
+                    int quantity = Integer.parseInt(table.getValueAt(row, 2).toString().trim());
+                    if (quantity < 25) {
+                        c.setBackground(Color.RED);
+                        c.setForeground(Color.WHITE);
+                    } else {
+                        c.setBackground(Color.WHITE);
+                        c.setForeground(Color.BLACK);
+                    }
+                } catch (NumberFormatException e) {
+                    System.err.println("Invalid quantity format at row " + row);
+                }
+                return c;
+            }
+        });
+        reportTable.repaint();
+    }
+
+    /**
+     * This method is called from within the constructor to initialize the form.
+     * WARNING: Do NOT modify this code. The content of this method is always
+     * regenerated by the Form Editor.
+     */
+    @SuppressWarnings("unchecked")
+    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+    private void initComponents() {
+
+        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+
+        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
+        getContentPane().setLayout(layout);
+        layout.setHorizontalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 400, Short.MAX_VALUE)
+        );
+        layout.setVerticalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 300, Short.MAX_VALUE)
+        );
+
+        pack();
+    }// </editor-fold>//GEN-END:initComponents
+
+    /**
+     * @param args the command line arguments
+     */
+    public static void main(String args[]) {
+        /* Set the Nimbus look and feel */
+        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
+        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
+         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
+         */
+        try {
+            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
+                if ("Nimbus".equals(info.getName())) {
+                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
+                    break;
+                }
+            }
+        } catch (ClassNotFoundException ex) {
+            java.util.logging.Logger.getLogger(ReportFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (InstantiationException ex) {
+            java.util.logging.Logger.getLogger(ReportFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (IllegalAccessException ex) {
+            java.util.logging.Logger.getLogger(ReportFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+            java.util.logging.Logger.getLogger(ReportFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        }
+        //</editor-fold>
+
+        /* Create and display the form */
+        java.awt.EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                new ReportFrame().setVisible(true);
+            }
+        });
+    }
+
+    // Variables declaration - do not modify//GEN-BEGIN:variables
+    // End of variables declaration//GEN-END:variables
+}

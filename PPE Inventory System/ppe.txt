@@ -1,0 +1,6 @@
+HC,Head Cover,SUP01,100
+FS,Face Shield,SUP02,100
+MS,Mask,SUP03,100
+GL,Gloves,SUP01,100
+GW,Gown,SUP02,100
+SC,Shoe Covers,SUP03,100
